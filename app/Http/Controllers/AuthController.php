@@ -229,4 +229,9 @@ class AuthController extends Controller
             ]);
         }
     }
+
+
+    public function update_user($Matri_Elev)
+    {
+    }
 }

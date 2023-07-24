@@ -29,6 +29,7 @@ Route::group(
         Route::get('refreshtoken', 'App\Http\Controllers\AuthController@refreshToken');
         Route::get('profile', 'App\Http\Controllers\AuthController@profile');
         Route::post('logout', 'App\Http\Controllers\AuthController@logout');
+        Route::put('update_user/{$Matri_Elev}', 'App\Http\Controllers\AuthController@update_user');
 
 
         Route::get('versements/{Matri_Elev}', [VersementController::class, 'versements']);
