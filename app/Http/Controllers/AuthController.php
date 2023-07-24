@@ -3,20 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Eleve;
+use App\Models\PasswordReset;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use PhpParser\Node\Stmt\TryCatch;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+
 
 class AuthController extends Controller
 {
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'register/{Matri_Elev}']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'register/{Matri_Elev}', 'forgetpassword']]);
     }
 
     // REGISTER
@@ -69,8 +76,8 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true,
                 'status' => 200,
-                'message' => 'Utilisateur modifier avec succès',
-                'user' => $eleves,
+                'message' => 'Utilisateur crée',
+                //'user' => $eleves,
 
             ], 200);
         } catch (Exception $e) {
@@ -113,7 +120,7 @@ class AuthController extends Controller
             return response()->json([
                 "success" => false,
                 "status" => 401,
-                "error" => "Compte inexistant ou mot de passe incorrecte",
+                "message" => "Compte inexistant ou mot de passe incorrecte",
             ], 401);
         }
         return $this->responseWithToken($token);
@@ -124,7 +131,7 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'status' => 200,
-            // 'data' => $user,
+            'data' => $user,
             'access_token' => $token,
             'type' => 'Bearer',
             'expires_in' => now()->addSeconds(JWTAuth::factory()->getTTL() * 60),
@@ -174,5 +181,52 @@ class AuthController extends Controller
             'status' => 200,
             'message' => 'Utilisateur déconnecté avec succès',
         ]);
+    }
+
+
+    public function forgetPassword(Request $request)
+    {
+        try {
+            $eleves = Eleve::where('mailetud', $request->mailetud)->first();
+            if ($eleves) {
+                $token = Str::random(40);
+                $domain = URL::to('/');
+                $url = $domain . '/reset-password?token=' . $token;
+
+                $data['url'] = $url;
+                $data['mailetud'] = $request->mailetud;
+                $data['title'] = "Réinitialisation Mot de Passe";
+                $data['body'] = "Veuillez cliquer sur ce lien pour réinitialiser votre mot de passe";
+                Mail::send('forgetPasswordMail', ['data' => $data], function ($message) use ($data) {
+                    $message->to($data['mailetud'])->subject($data['title']);
+                });
+                $datetime = Carbon::now()->format('Y-m-d H:i:s');
+                PasswordReset::updateOrCreate(
+                    ['email' => $request->mailetud],
+                    [
+                        'email' => $request->mailetud,
+                        'token' => $token,
+                        'created_at' => $request->$datetime
+                    ]
+                );
+                return response()->json([
+                    'success' => true,
+                    'status' => 200,
+                    'message' => 'Veuillez vérifier votre mail',
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'status' => 401,
+                    'message' => 'Ce mail ne correspond pas à celui fournit lors de votre inscription',
+                ]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+
+            ]);
+        }
     }
 }

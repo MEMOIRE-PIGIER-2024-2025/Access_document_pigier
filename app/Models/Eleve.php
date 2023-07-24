@@ -37,4 +37,9 @@ class Eleve extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function encaissementelevespls()
+    {
+        return $this->hasMany(EncaissementElevesPl::class);
+    }
 }
