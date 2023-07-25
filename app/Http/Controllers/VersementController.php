@@ -95,6 +95,7 @@ class VersementController extends Controller
             ->where('Elèves.Matri_Elev', $Matri_Elev)
             // ->whereYear('Henc.Date_Encais', '<', $anneeCourante)
             ->whereRaw('SUBSTRING(Henc.Annee_scolaire, 1, 4) < ?', $anneeCourante)
+            //->groupBy('Henc.Annee_scolaire')
             ->latest('Henc.Date_Encais')
             ->get();
 
