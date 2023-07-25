@@ -19,6 +19,7 @@ class Eleve extends Authenticatable implements JWTSubject
 
     protected $fillable = [
         'Matri_Elev',
+        'Nom_Elev',
         'password',
     ];
 

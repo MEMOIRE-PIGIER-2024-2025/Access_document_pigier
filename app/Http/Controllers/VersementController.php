@@ -35,7 +35,7 @@ class VersementController extends Controller
                 [
                     'success'  => false,
                     'status' => 401,
-                    'message' => 'Aucun versement trouvé pour l\'année en cours'
+                    'message' => 'Aucun versement trouvé pour l\'année académique' . $currentYear
                 ],
                 401
             );
@@ -69,7 +69,7 @@ class VersementController extends Controller
                 [
                     'success'  => false,
                     'status' => 401,
-                    'message' => 'Aucun versement trouvé pour l\'année en cours'
+                    'message' => 'Aucun versement trouvé pour l\'année académique' . $currentYear
                 ],
                 401
             );
@@ -104,7 +104,7 @@ class VersementController extends Controller
                 [
                     'success'  => false,
                     'status' => 401,
-                    'message' => 'Aucun versement trouvé'
+                    'message' => 'Aucun versement antérieur trouvé'
                 ],
                 401
             );

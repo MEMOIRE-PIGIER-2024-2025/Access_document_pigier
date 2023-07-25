@@ -25,16 +25,24 @@ Route::group(
 
     ],
     function ($router) {
+        // AUTHENTICATION
         Route::put('register/{Matri_Elev}', 'App\Http\Controllers\AuthController@register');
         Route::post('login', 'App\Http\Controllers\AuthController@login');
         Route::get('refreshtoken', 'App\Http\Controllers\AuthController@refreshToken');
         Route::get('profile', 'App\Http\Controllers\AuthController@profile');
         Route::post('logout', 'App\Http\Controllers\AuthController@logout');
 
+
+        // API USER
         Route::put('update_user/{Matri_Elev}', 'App\Http\Controllers\UserController@update_user');
 
-        Route::get('versements/{Matri_Elev}', [VersementController::class, 'versements']);
+
+        // API VERSEMENTS
+        Route::get('versements/{Matri_Elev}', 'App\Http\Controllers\VersementController@versements');
         Route::get('all_versements/{Matri_Elev}', 'App\Http\Controllers\VersementController@all_versements');
         Route::get('last_versements/{Matri_Elev}', 'App\Http\Controllers\VersementController@last_versements');
+
+        // API CERTIFICATS
+        Route::get('certificat_inscription/{Matri_Elev}', 'App\Http\Controllers\CertificatsController@certificat_inscription');
     }
 );
