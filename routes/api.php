@@ -43,6 +43,7 @@ Route::group(
         Route::get('last_versements/{Matri_Elev}', 'App\Http\Controllers\VersementController@last_versements');
 
         // API CERTIFICATS
-        Route::get('certificat_inscription/{Matri_Elev}', 'App\Http\Controllers\CertificatsController@certificat_inscription');
+        Route::get('certificats/{Matri_Elev}', 'App\Http\Controllers\CertificatController@getCertificats');
+        Route::get('certificats_scol/{Matri_Elev}', 'App\Http\Controllers\CertificatController@getCertificats_scol');
     }
 );

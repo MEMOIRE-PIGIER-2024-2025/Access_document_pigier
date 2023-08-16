@@ -52,9 +52,13 @@ class AuthController extends Controller
                 $request->all(),
                 [
                     'password' => 'required|string|min:6|confirmed',
+                    'mailetud' => 'required|email|unique:users',
 
+                ],
+                [
+                    'mailetud.email' => 'Veuillez saisir une adresse email valide.',
                 ]
-            );
+            );;
             if ($validator->fails()) {
                 $errors = $validator->errors();
                 // Traitez les erreurs de validation, par exemple, renvoyez une réponse JSON contenant les erreurs
@@ -62,14 +66,13 @@ class AuthController extends Controller
                     [
                         'success'  => false,
                         'status' => 422,
-                        'errors' => [
-                            $validator->errors()
-                        ],
+                        'message' => $validator
                     ],
                     422
                 );
             }
             $eleves->password = Hash::make($request->password);
+            $eleves->mailetud = $request->mailetud;
             $eleves->active = true;
             $eleves->save();
 
@@ -86,10 +89,6 @@ class AuthController extends Controller
             ], 500);
         }
     }
-
-
-
-
 
 
     public function login(Request $request)
@@ -109,9 +108,8 @@ class AuthController extends Controller
                 [
                     'success'  => false,
                     'status' => 422,
-                    'errors' => [
-                        $validator->errors()
-                    ],
+                    'message' => $validator->errors(),
+
                 ],
                 422
             );
@@ -127,6 +125,7 @@ class AuthController extends Controller
     }
     protected function responseWithToken($token)
     {
+        $date = now()->addSeconds(JWTAuth::factory()->getTTL() * 60);
         $user = auth()->user();
         return response()->json([
             'success' => true,
@@ -134,13 +133,18 @@ class AuthController extends Controller
             'data' => $user,
             'access_token' => $token,
             'type' => 'Bearer',
-            'expires_in' => now()->addSeconds(JWTAuth::factory()->getTTL() * 60),
+            'expires_in' => date($date),
+            'date_expire_in' => $date->format('Y-m-d'),
+            'heure_expire_in' => $date->format('H:i:s'),
+
 
         ], 200);
     }
 
     public function refreshToken()
     {
+        $date = now()->addSeconds(JWTAuth::factory()->getTTL() * 60);
+
         if (auth()->user()) {
             return response()->json([
                 'success' => true,
@@ -148,6 +152,10 @@ class AuthController extends Controller
                 'authorisation' => [
                     'token' => Auth::refresh(),
                     'type' => 'bearer',
+                    //'expires_in' => now()->addSeconds(JWTAuth::factory()->getTTL() * 60),
+                    'expires_in' => date($date),
+
+
                 ]
             ], 200);
         } else {
