@@ -56,7 +56,6 @@ class CertificatController extends Controller
                     'success'  => true,
                     'status' => 200,
                     'certificat inscription' => $certificat,
-                    'certificat frequentation' => $certificat,
                 ],
                 200
             );
@@ -76,37 +75,9 @@ class CertificatController extends Controller
                 'message' => "utilisateur inconnu",
             ], 404);
         } else {
-            $certificatScol = DB::table('Historique as Hst')
-                ->selectRaw('Hst.Nom_Elev, Hst.Datenais_Elev, Hst.Lieunais_Elev, Hst.Actenais_Elev, Hst.Matri_Elev, Cla.Nom_Cla, Hst.DateEntre_Elev, Hst.AnneeSco_Elev, GETDATE() as datejour')
-                ->join('Détail Classes as detcla', 'detcla.Code_Detcla', '=', 'Hst.Code_Detcla')
-                ->join('Classes Info Générales as cla', 'detcla.Code_Cla', '=', 'cla.Code_Cla')
-                ->join('Encaissements des Elèves Pl as En', 'Hst.Matri_Elev', '=', 'En.Matri_Elev')
-                ->where('Hst.Matri_Elev', $Matri_Elev)
-                ->where('Hst.SoldSco_Elev', '=', 0)
-                ->distinct()
-                //->orderByRaw('Hst.ID_Historique')
-                ->get();
 
-            if ($certificatScol->isEmpty()) {
-                return response()->json(
-                    [
-                        'success'  => false,
-                        'status' => 401,
-                        'message' => 'Aucun certificat de scolarité trouvé ',
+            //code
 
-                    ],
-                    401
-                );
-            }
-            return response()->json(
-                [
-
-                    'success'  => true,
-                    'status' => 200,
-                    'certificat de scolarité' => $certificatScol,
-                ],
-                200
-            );
         }
     }
 }

@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'api',
-        'passwords' => 'eleves',
+        'passwords' => 'etudiants',
     ],
 
     /*
@@ -42,7 +42,7 @@ return [
         ],
         'api' => [
             'driver' => 'jwt',
-            'provider' => 'eleves',
+            'provider' => 'etudiants',
         ],
     ],
 
@@ -64,9 +64,9 @@ return [
     */
 
     'providers' => [
-        'eleves' => [
+        'etudiants' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Eleve::class,
+            'model' => App\Models\Etudiant::class,
         ],
 
         // 'users' => [
@@ -95,8 +95,8 @@ return [
     */
 
     'passwords' => [
-        'eleves' => [
-            'provider' => 'eleves',
+        'etudiants' => [
+            'provider' => 'etudiants',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

@@ -14,55 +14,55 @@ class VersementController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register', 'register/{Matri_Elev}', 'forgetpassword']]);
     }
 
+    //3 derniere versements de l'eleves de lannee en cours
     public function versements($Matri_Elev)
     {
-        $currentYear = date('Y');
+        // $currentYear = date('Y');
+        // $user = Eleve::find($Matri_Elev);
+        // if (!$user) {
+        //     return Response()->json([
+        //         'success' => false,
+        //         'status' => 404,
+        //         'message' => "utilisateur inconnu",
+        //     ], 404);
+        // } else {
 
-        $user = Eleve::find($Matri_Elev);
+        //     $versement = DB::table('Elèves')
+        //         ->selectRaw('En.Date_Encais, En.Matri_Elev, En.Ancien_sold, En.Montant_Encais, En.Nouveau_sold, En.anneeScolEncaissElevPL, Elèves.Code_Detcla')
+        //         ->join('Encaissements des Elèves Pl as En', 'Elèves.Matri_Elev', '=', 'En.Matri_Elev')
+        //         ->where('Elèves.Matri_Elev', $Matri_Elev)
+        //         ->where('En.anneeScolEncaissElevPL', 'LIKE', '%' . $currentYear . '%')
+        //         //->whereYear('En.Date_Encais', date('Y'))
+        //         ->latest('En.Date_Encais')
+        //         ->take(3)
+        //         ->get();
 
-
-
-        if (!$user) {
-            return Response()->json([
-                'success' => false,
-                'status' => 404,
-                'message' => "utilisateur inconnu",
-            ], 404);
-        } else {
-
-            $versement = DB::table('Elèves')
-                ->selectRaw('En.Date_Encais, En.Matri_Elev, En.Ancien_sold, En.Montant_Encais, En.Nouveau_sold, En.anneeScolEncaissElevPL, Elèves.Code_Detcla')
-                ->join('Encaissements des Elèves Pl as En', 'Elèves.Matri_Elev', '=', 'En.Matri_Elev')
-                ->where('Elèves.Matri_Elev', $Matri_Elev)
-                ->where('En.anneeScolEncaissElevPL', 'LIKE', '%' . $currentYear . '%')
-                //->whereYear('En.Date_Encais', date('Y'))
-                ->latest('En.Date_Encais')
-                ->take(3)
-                ->get();
-
-            if ($versement->isEmpty()) {
+        //     if ($versement->isEmpty()) {
 
 
-                return response()->json(
-                    [
-                        'success'  => false,
-                        'status' => 401,
-                        'message' => 'Aucun versement trouvé pour l\'année académique ' . $currentYear
-                    ],
-                    401
-                );
-            } else {
-                return response()->json(
-                    [
-                        'success'  => true,
-                        'status' => 200,
-                        'versements' => $versement
-                    ],
-                    200
-                );
-            }
-        }
+        //         return response()->json(
+        //             [
+        //                 'success'  => false,
+        //                 'status' => 401,
+        //                 'message' => 'Aucun versement trouvé pour l\'année académique ' . $currentYear
+        //             ],
+        //             401
+        //         );
+        //     } else {
+        //         return response()->json(
+        //             [
+        //                 'success'  => true,
+        //                 'status' => 200,
+        //                 'versements' => $versement
+        //             ],
+        //             200
+        //         );
+        //     }
+        // }
+
     }
+
+    //tous les versements de l'eleves de lannee en cours
 
     public function all_versements($Matri_Elev)
     {
@@ -110,6 +110,8 @@ class VersementController extends Controller
             }
         }
     }
+
+    //versements de l'eleves des année precedentes
 
     public function last_versements($Matri_Elev)
     {

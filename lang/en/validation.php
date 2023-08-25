@@ -175,6 +175,10 @@ return [
         'Matri_Elev' => [
             'required' => 'le matricule est obligatoire',
             'string' => 'le matricule est une chaine de caractères',
+        ],
+        'mailetud' => [
+            'email' => 'Email invalide',
+            'unique' => 'Cet email existe déjà. Veuillez entrer un email disponible.',
         ]
 
 

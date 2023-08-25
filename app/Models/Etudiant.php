@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Foundation\Auth\Historiques as Authenticatable;
-
-use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\Etudiant as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+
 use Illuminate\Database\Eloquent\Model;
 
-class Historique extends Model
+class Etudiant extends Authenticatable implements JWTSubject
 {
     use HasFactory;
-    protected $table = 'Historique';
-    protected $primaryKey = 'ID_Historique';
+
+    protected $table = 'etudiants';
 
     protected $fillable = [
         'Matri_Elev',
@@ -44,6 +43,7 @@ class Historique extends Model
         'AnneeSco_Elev',
         'SerieBac_Elev',
         'DateObtBac_Elev',
+        'Redouble_Elev',
         'Cycle_Elev',
         'NomResp_Elev',
         'ProfResp_Elev',
@@ -59,8 +59,6 @@ class Historique extends Model
         'DejaRegle',
         'Photo',
         'Comment',
-        'tri_ordre',
-        'AncMatricule',
         'Condition_Elev',
         'Cotisation',
         'SoldFraisExam',
@@ -79,7 +77,6 @@ class Historique extends Model
         'cometud',
         'mailetud',
         'reduction',
-        'Redouble_Elev',
         'Etab_source',
         'Avoir',
         'natPiece',
@@ -98,9 +95,9 @@ class Historique extends Model
         'Deuxieme_Extrait_naissance',
         'Deuxieme_Photocopie_Legalise_BAC',
         'DateInscri_Eleve',
+        'mailparent',
+        'Inscrit_Carte',
         'idperm',
-        'inscritSoutenance',
-        'dateInscritSoutenance',
         'Inscrit_Sous_Titre',
         'Inscrit_Sous_Bulletin',
         'MoySemPremier',
@@ -108,15 +105,36 @@ class Historique extends Model
         'MoyAnnuelle',
         'TotalCreditSemPremier',
         'TotalCreditSemDeuxieme',
-    ];
+        'rememberToken',
+        'password',
+        'active',
+        'created_at',
+        'updated_at',
 
+    ];
 
     protected $hidden = [
         'password',
     ];
     protected $casts = [
         'Matri_Elev' => 'string',
-        // 'Datenais_Elev' => 'datetime',
-        // 'DateEntre_Elev' => 'datetime',
+        'Datenais_Elev' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+
+
     ];
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    public function encaissementelevespls()
+    {
+        return $this->hasMany(EncaissementElevesPl::class);
+    }
 }
