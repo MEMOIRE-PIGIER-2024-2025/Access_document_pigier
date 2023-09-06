@@ -69,25 +69,34 @@ class CertificatController extends Controller
                 'message' => 'L\'élève ayant le matricule ' . $Matri_Elev . ' est introvable.',
             ]);
         } else {
+
             //Certificate de scolarité
             $certificat_scol = DB::table('Historique as Hist')
-                ->selectRaw('Hist.Nom_Elev, Hist.Lieunais_Elev, Hist.Actenais_Elev, Hist.DateEntre_Elev, Hist.Matri_Elev, Cla.Nom_Cla, Hist.AnneeSco_Elev')
+                ->selectRaw('Hist.Nom_Elev, Hist.Lieunais_Elev, Hist.Actenais_Elev, Hist.DateEntre_Elev, cla.Nom_Cla, Hist.Matri_Elev, Hist.AnneeSco_Elev')
                 ->selectRaw("CONCAT(RIGHT('00' + CAST(DATEPART(day, Hist.Datenais_Elev) AS NVARCHAR(2)), 2), '/', RIGHT('00' + CAST(DATEPART(month, Hist.Datenais_Elev) AS NVARCHAR(2)), 2), '/', DATEPART(year,Hist.Datenais_Elev)) as Datenais_Elev")
                 ->selectRaw("CONCAT(RIGHT('00' + CAST(DATEPART(day,  GETDATE()) AS NVARCHAR(2)), 2), '/', RIGHT('00' + CAST(DATEPART(month,  GETDATE()) AS NVARCHAR(2)), 2), '/', DATEPART(year, GETDATE())) as datejour")
-
                 ->join('Détail Classes as detcla', 'detcla.Code_Detcla', '=', 'Hist.Code_Detcla')
                 ->join('Classes Info Générales as cla', 'detcla.Code_Cla', '=', 'cla.Code_Cla')
                 ->where('Hist.Matri_Elev', $Matri_Elev)
-                ->where('Hist.SoldSco_Elev', 0)
                 ->orderBy('Hist.AnneeSco_Elev', 'asc')
                 ->get();
-            $firstDateEntreElev = $certificat_scol->first()->DateEntre_Elev;
+
+
+            //$firstDateEntreElev = $certificat_scol->first()->DateEntre_Elev;
 
             $certificat_scol_Date = DB::table('Historique as Hist')
-                ->selectRaw("CONCAT(RIGHT('00' + CAST(DATEPART(day, '$firstDateEntreElev') AS NVARCHAR(2)), 2), '/', RIGHT('00' + CAST(DATEPART(month, '$firstDateEntreElev') AS NVARCHAR(2)), 2), '/', DATEPART(year,'$firstDateEntreElev')) as Debut")
+                ->selectRaw("CONCAT(RIGHT('00' + CAST(DATEPART(day, Hist.DateEntre_Elev) AS NVARCHAR(2)), 2), '/', RIGHT('00' + CAST(DATEPART(month, Hist.DateEntre_Elev) AS NVARCHAR(2)), 2), '/', DATEPART(year,Hist.DateEntre_Elev)) as Debut")
                 ->selectRaw("CONCAT('30/06/',RIGHT(Hist.AnneeSco_Elev, 4)) as Fin")
                 ->where('Hist.Matri_Elev', $Matri_Elev)
-                ->where('Hist.SoldSco_Elev', 0)
+                ->orderBy('Hist.AnneeSco_Elev', 'asc')
+                ->get()
+                ->last();
+
+            $certificat_scol_last = DB::table('Historique as Hist')
+                // ->selectRaw('Hist.Nom_Elev, Hist.Lieunais_Elev, Hist.Actenais_Elev, Hist.DateEntre_Elev, Hist.Matri_Elev, Cla.Nom_Cla, Hist.AnneeSco_Elev, Hist.SoldSco_Elev')
+                // ->join('Détail Classes as detcla', 'detcla.Code_Detcla', '=', 'Hist.Code_Detcla')
+                // ->join('Classes Info Générales as cla', 'detcla.Code_Cla', '=', 'cla.Code_Cla')
+                ->where('Hist.Matri_Elev', $Matri_Elev)
                 ->orderBy('Hist.AnneeSco_Elev', 'asc')
                 ->get()
                 ->last();
@@ -101,6 +110,16 @@ class CertificatController extends Controller
                         'success'  => false,
                         'status' => 401,
                         'message' => 'Aucun certificat trouvé',
+                    ]
+
+                );
+            }
+            if ($certificat_scol_last->SoldSco_Elev != 0) {
+                return response()->json(
+                    [
+                        'success'  => false,
+                        'status' => 401,
+                        'message' => 'Veuillez solder votre scolarité pour acceder à votre certificat!',
                     ]
 
                 );

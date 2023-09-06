@@ -31,8 +31,9 @@ class VersementController extends Controller
             );
         }
         $versements = DB::table('Encaissements des Elèves Pl as En')
-            ->selectRaw('En.Date_Encais, En.Matri_Elev, En.Ancien_sold, En.Montant_Encais, En.Nouveau_sold, En.anneeScolEncaissElevPL, etudiants.Code_Detcla')
-            ->join('etudiants', 'En.Matri_Elev', '=', 'etudiants.Matri_Elev')
+            ->selectRaw("CONCAT(RIGHT('00' + CAST(DATEPART(day, En.Date_Encais) AS NVARCHAR(2)), 2), '/', RIGHT('00' + CAST(DATEPART(month,  En.Date_Encais) AS NVARCHAR(2)), 2), '/', DATEPART(year, En.Date_Encais)) as Date_Encais")
+            ->selectRaw('En.Ancien_sold, En.Montant_Encais, En.Nouveau_sold, En.anneeScolEncaissElevPL')
+            //->join('etudiants', 'En.Matri_Elev', '=', 'etudiants.Matri_Elev')
             ->where('En.Matri_Elev', $Matri_Elev)
             ->where('En.anneeScolEncaissElevPL', 'LIKE', '%' . $currentYear . '%')
             ->latest('En.Date_Encais')
@@ -42,8 +43,9 @@ class VersementController extends Controller
         if ($versements->isEmpty()) {
 
             $versements = DB::table('Historique_Encaissement_Pl as Hen')
-                ->selectRaw('Hen.Date_Encais, Hen.Matri_Elev, Hen.Ancien_sold, Hen.Montant_Encais, Hen.Nouveau_sold, Hen.anneeScolEncaissElevPL, etudiants.Code_Detcla')
-                ->join('etudiants', 'Hen.Matri_Elev', '=', 'etudiants.Matri_Elev')
+                ->selectRaw("CONCAT(RIGHT('00' + CAST(DATEPART(day, Hen.Date_Encais) AS NVARCHAR(2)), 2), '/', RIGHT('00' + CAST(DATEPART(month,  Hen.Date_Encais) AS NVARCHAR(2)), 2), '/', DATEPART(year, Hen.Date_Encais)) as Date_Encais")
+                ->selectRaw('Hen.Ancien_sold, Hen.Montant_Encais, Hen.Nouveau_sold, Hen.Annee_scolaire')
+                //->join('etudiants', 'Hen.Matri_Elev', '=', 'etudiants.Matri_Elev')
                 ->where('Hen.Matri_Elev', $Matri_Elev)
                 ->where('Hen.Annee_scolaire', 'LIKE', '%' . $currentYear . '%')
                 ->latest('Hen.Date_Encais')
@@ -81,8 +83,9 @@ class VersementController extends Controller
             );
         }
         $versements = DB::table('Encaissements des Elèves Pl as En')
-            ->selectRaw('En.Date_Encais, En.Matri_Elev, En.Ancien_sold, En.Montant_Encais, En.Nouveau_sold, En.anneeScolEncaissElevPL, etudiants.Code_Detcla')
-            ->join('etudiants', 'En.Matri_Elev', '=', 'etudiants.Matri_Elev')
+            ->selectRaw("CONCAT(RIGHT('00' + CAST(DATEPART(day, En.Date_Encais) AS NVARCHAR(2)), 2), '/', RIGHT('00' + CAST(DATEPART(month,  En.Date_Encais) AS NVARCHAR(2)), 2), '/', DATEPART(year, En.Date_Encais)) as Date_Encais")
+            ->selectRaw('En.Ancien_sold, En.Montant_Encais, En.Nouveau_sold, En.anneeScolEncaissElevPL')
+            // ->join('etudiants', 'En.Matri_Elev', '=', 'etudiants.Matri_Elev')
             ->where('En.Matri_Elev', $Matri_Elev)
             ->where('En.anneeScolEncaissElevPL', 'LIKE', '%' . $currentYear . '%')
             ->latest('En.Date_Encais')
@@ -91,8 +94,9 @@ class VersementController extends Controller
         if ($versements->isEmpty()) {
 
             $versements = DB::table('Historique_Encaissement_Pl as Hen')
-                ->selectRaw('Hen.Date_Encais, Hen.Matri_Elev, Hen.Ancien_sold, Hen.Montant_Encais, Hen.Nouveau_sold, Hen.anneeScolEncaissElevPL, etudiants.Code_Detcla')
-                ->join('etudiants', 'Hen.Matri_Elev', '=', 'etudiants.Matri_Elev')
+                ->selectRaw("CONCAT(RIGHT('00' + CAST(DATEPART(day, Hen.Date_Encais) AS NVARCHAR(2)), 2), '/', RIGHT('00' + CAST(DATEPART(month,  Hen.Date_Encais) AS NVARCHAR(2)), 2), '/', DATEPART(year, Hen.Date_Encais)) as Date_Encais")
+                ->selectRaw('Hen.Ancien_sold, Hen.Montant_Encais, Hen.Nouveau_sold, Hen.Annee_scolaire')
+                //->join('etudiants', 'Hen.Matri_Elev', '=', 'etudiants.Matri_Elev')
                 ->where('Hen.Matri_Elev', $Matri_Elev)
                 ->where('Hen.Annee_scolaire', 'LIKE', '%' . $currentYear . '%')
                 ->latest('Hen.Date_Encais')
@@ -129,8 +133,9 @@ class VersementController extends Controller
             );
         }
         $versements = DB::table('Historique_Encaissement_Pl as Hen')
-            ->selectRaw('Hen.Date_Encais, Hen.Matri_Elev, Hen.Ancien_sold, Hen.Montant_Encais, Hen.Nouveau_sold, Hen.Annee_scolaire, etudiants.Code_Detcla')
-            ->join('etudiants', 'Hen.Matri_Elev', '=', 'etudiants.Matri_Elev')
+            ->selectRaw("CONCAT(RIGHT('00' + CAST(DATEPART(day, Hen.Date_Encais) AS NVARCHAR(2)), 2), '/', RIGHT('00' + CAST(DATEPART(month,  Hen.Date_Encais) AS NVARCHAR(2)), 2), '/', DATEPART(year, Hen.Date_Encais)) as Date_Encais")
+            ->selectRaw('Hen.Ancien_sold, Hen.Montant_Encais, Hen.Nouveau_sold, Hen.Annee_scolaire')
+            //->join('Historique as histo', 'Hen.Matri_Elev', '=', 'histo.Matri_Elev')
             ->where('Hen.Matri_Elev', $Matri_Elev)
             ->whereRaw('SUBSTRING(Hen.Annee_scolaire, 1, 4) < ?', $anneeCourante)
             ->latest('Hen.Date_Encais')

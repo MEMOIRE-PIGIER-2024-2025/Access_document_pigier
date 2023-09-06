@@ -47,6 +47,6 @@ Route::group(
         Route::get('certificat_scol/{Matri_Elev}', 'App\Http\Controllers\CertificatController@getCertificats_scol');
 
         // API RELEVE DE NOTE
-        Route::get('releves/{Matri_Elev}', 'App\Http\Controllers\RelevesController@getreleves');
+        Route::get('releves/{Matri_Elev}', 'App\Http\Controllers\RelevesController@getannee');
     }
 );
