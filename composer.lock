@@ -7038,17 +7038,6 @@
             "time": "2022-02-21T01:04:05+00:00"
         },
         {
-<<<<<<< HEAD
-            "name": "phpunit/php-code-coverage",
-            "version": "10.1.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "cd59bb34756a16ca8253ce9b2909039c227fff71"
-            },
-            "dist": {
-                "type": "zip",
-=======
             "name": "phpcompatibility/php-compatibility",
             "version": "9.3.5",
             "source": {
@@ -7232,7 +7221,6 @@
             },
             "dist": {
                 "type": "zip",
->>>>>>> af7ca34ec355ee862b15dbdf14b968c9cfca2e56
                 "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/cd59bb34756a16ca8253ce9b2909039c227fff71",
                 "reference": "cd59bb34756a16ca8253ce9b2909039c227fff71",
                 "shasum": ""
@@ -8917,17 +8905,6 @@
             "time": "2023-08-23T06:24:34+00:00"
         },
         {
-<<<<<<< HEAD
-            "name": "symfony/yaml",
-            "version": "v6.3.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/yaml.git",
-                "reference": "e23292e8c07c85b971b44c1c4b87af52133e2add"
-            },
-            "dist": {
-                "type": "zip",
-=======
             "name": "squizlabs/php_codesniffer",
             "version": "3.7.2",
             "source": {
@@ -8994,7 +8971,6 @@
             },
             "dist": {
                 "type": "zip",
->>>>>>> af7ca34ec355ee862b15dbdf14b968c9cfca2e56
                 "url": "https://api.github.com/repos/symfony/yaml/zipball/e23292e8c07c85b971b44c1c4b87af52133e2add",
                 "reference": "e23292e8c07c85b971b44c1c4b87af52133e2add",
                 "shasum": ""
