@@ -134,7 +134,7 @@ class VersementController extends Controller
         }
         $versements = DB::table('Historique_Encaissement_Pl as Hen')
             ->selectRaw("CONCAT(RIGHT('00' + CAST(DATEPART(day, Hen.Date_Encais) AS NVARCHAR(2)), 2), '/', RIGHT('00' + CAST(DATEPART(month,  Hen.Date_Encais) AS NVARCHAR(2)), 2), '/', DATEPART(year, Hen.Date_Encais)) as Date_Encais")
-            ->selectRaw('Hen.Ancien_sold, Hen.Montant_Encais, Hen.Nouveau_sold, Hen.Annee_scolaire')
+            ->selectRaw('Hen.Ancien_sold, Hen.Montant_Encais, Hen.Nouveau_sold, Hen.Annee_scolaire as anneeScolEncaissElevPL')
             //->join('Historique as histo', 'Hen.Matri_Elev', '=', 'histo.Matri_Elev')
             ->where('Hen.Matri_Elev', $Matri_Elev)
             ->whereRaw('SUBSTRING(Hen.Annee_scolaire, 1, 4) < ?', $anneeCourante)
