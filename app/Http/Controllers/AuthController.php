@@ -43,6 +43,7 @@ class AuthController extends Controller
                     return $this->updateEtudiants($etud, $request);
                 } else {
                     return Response()->json([
+                        'status' => 401,
                         'message' => "Cet élève existe déjà, veuillez-vous connectez !",
                     ]);
                 }
