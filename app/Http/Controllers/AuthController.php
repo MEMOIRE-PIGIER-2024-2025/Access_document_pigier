@@ -216,7 +216,7 @@ class AuthController extends Controller
                 "success" => false,
                 "status" => 401,
                 "message" => "Compte inexistant ou mot de passe incorrecte",
-            ], 401);
+            ]);
         }
         return $this->responseWithToken($token);
     }
@@ -235,7 +235,7 @@ class AuthController extends Controller
             'heure_expire_in' => $date->format('H:i:s'),
 
 
-        ], 200);
+        ]);
     }
 
     /********************************* REFRESHTOKEN ******************************/
@@ -256,7 +256,7 @@ class AuthController extends Controller
 
 
                 ]
-            ], 200);
+            ]);
         } else {
             return response()->json([
                 'success' => false,
