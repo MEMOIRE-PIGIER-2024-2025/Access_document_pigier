@@ -207,8 +207,8 @@ class AuthController extends Controller
                     'status' => 422,
                     'message' => $validator->errors(),
 
-                ],
-                422
+                ]
+                
             );
         }
         if (!$token = auth()->attempt($validator->validated())) {
