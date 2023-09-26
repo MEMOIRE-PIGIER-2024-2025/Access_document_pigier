@@ -133,18 +133,21 @@ class RelevesController extends Controller {
             //retourner la session
 
             $sessions = DB::table('DELIBERER as delib')
-            ->select('sess.CODE_SESS as session')
+             ->select('exam.Code_Examen as session_annee')
+            // ->selectRaw("SUBSTRING_INDEX(SUBSTRING_INDEX(group.IdGroupe, '-', -2), '-', 1) as annee")
+            //->selectRaw('CONCAT(sess.CODE_SESS, "-", SUBSTRING(delib.IdGroupe, CHARINDEX(\'-\', delib.IdGroupe) + 1, 4)) as session_annee')
+            //->selectRaw('SUBSTRING(delib.IdGroupe, LEN(delib.IdGroupe) - 3 + 1, 4)as session_annee')
             ->join('etudiants as etud', 'delib.Matri_Elev', '=', 'etud.Matri_Elev' )
             ->join( 'UE', 'delib.CodeUE', '=', 'UE.CodeUE' )
-            ->join( 'GROUPE as group', 'delib.IdGroupe', '=', 'group.IdGroupe' )
-            ->join( 'Examen as exam', 'group.Code_Examen', '=', 'exam.Code_Examen' )
+            ->join( 'GROUPE as [group]', 'delib.IdGroupe', '=', '[group].IdGroupe' )
+            ->join( 'Examen as exam', '[group].Code_Examen', '=', 'exam.Code_Examen' )
             ->join( 'ECUE', 'UE.CodeUE', '=', 'ECUE.CodeUE' )
             ->join( 'session as sess', 'exam.COD_SESS', '=', 'sess.CODE_SESS' )
             ->where( 'sess.CODE_SESS', 'Sess2')
             ->where( 'delib.Matri_Elev', $Matri_Elev )
             ->where( 'delib.Annee', trim(str_replace('-', '/', $annee_acad) ))
             ->distinct()
-            ->pluck('session');
+            ->pluck('session_annee');
 
 
             if($semestre->isEmpty())
