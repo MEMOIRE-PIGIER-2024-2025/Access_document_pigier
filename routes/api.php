@@ -48,5 +48,6 @@ Route::group(
         // API RELEVE DE NOTE
         Route::get( 'releves/{Matri_Elev}', 'App\Http\Controllers\RelevesController@getannee' );
         Route::get( 'releves_semestre/{Matri_Elev}/{annee_acad}', 'App\Http\Controllers\RelevesController@getreleve' );
+        Route::get( 'releves_note/{Matri_Elev}/{annee_acad}/{semestre}', 'App\Http\Controllers\RelevesController@relevesnote' );
     }
 );

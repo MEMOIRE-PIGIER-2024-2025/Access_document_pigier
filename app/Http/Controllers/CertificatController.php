@@ -102,8 +102,6 @@ class CertificatController extends Controller
                 ->last();
 
 
-
-
             if ($certificat_scol->isEmpty()) {
                 return response()->json(
                     [
@@ -119,7 +117,7 @@ class CertificatController extends Controller
                     [
                         'success'  => false,
                         'status' => 401,
-                        'message' => 'Veuillez solder votre scolarité pour acceder à votre certificat!',
+                        'message' => 'Veuillez solder votre scolarité pour acceder à votre certificat de scolarité!',
                     ]
 
                 );
