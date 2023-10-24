@@ -96,7 +96,8 @@ class RelevesController extends Controller {
 {
     
     $results = DB::table('DELIBERER as delib')
-    ->selectRaw('sem.Code_semestre, sem.lib_semetre, ECUE.code_ecue, ECUE.lib_ecue, ECUE.coef, delib.Moyenne, delib.Des_Deliber, CONCAT(sess.CODE_SESS, \' \', GROUPE.Annee_Academic) as SessionAnnee')
+    ->selectRaw('sem.Code_semestre, sem.lib_semetre, UE.CodeUE, UE.LibelleUE, ECUE.coef, FORMAT(delib.Moyenne, \'0.00\') as Moyenne, delib.Des_Deliber, CONCAT(sess.CODE_SESS, \' \', GROUPE.Annee_Academic) as SessionAnnee')
+    // ->selectRaw('CASE WHEN delib.Des_Deliber = \'Validé\' THEN ECUE.coef ELSE 0 END as CoefValide')
     ->join('etudiants as etud', 'delib.Matri_Elev', '=', 'etud.Matri_Elev')
     ->join('UE', 'delib.CodeUE', '=', 'UE.CodeUE')
     ->join('GROUPE', 'delib.IdGroupe', '=', 'GROUPE.IdGroupe')
@@ -109,16 +110,35 @@ class RelevesController extends Controller {
     ->where('UE.AnneeAcademiqueUE', trim(str_replace('-', '/', $annee_acad)))
     ->where('delib.Annee', trim(str_replace('-', '/', $annee_acad)))
     ->where('GROUPE.Annee_Academic', trim(str_replace('-', '/', $annee_acad)))
-    ->where('sem.Code_semestre', $semestre)
+    ->where('sem.Code_semestre', trim($semestre))
     ->get();
 
-    foreach ($results as $result) {
+// Créez un tableau associatif pour stocker les résultats fusionnés
+$mergedResults = [];
+
+/************** fusionner les ECUE ayant le meme numero UE ****************************/
+// Parcourez les résultats de la requête
+foreach ($results as $result) {
+    $codeUE = $result->CodeUE;
+
+    // Si le CodeUE existe déjà dans $mergedResults, ajoutez le coefficient
+    if (isset($mergedResults[$codeUE])) {
+        $mergedResults[$codeUE]->coef += $result->coef;
+    } else {
+        // Sinon, ajoutez le résultat tel quel
+        $mergedResults[$codeUE] = $result;
+    }
+}
+
+/************** Fin fusionnage ****************************/
+
+    foreach ($mergedResults as $result) {
         if ($result->Des_Deliber === "Ajourné") {
-            $codeUE = $result->code_ecue;
+            $codeUE = $result->CodeUE;
 
             // Exécutez la deuxième requête pour les mêmes critères
             $results_par_session = DB::table('DELIBERER as delib')
-            ->selectRaw('ECUE.code_ecue, ECUE.lib_ecue, ECUE.coef, delib.Moyenne, delib.Des_Deliber,CONCAT(sess.CODE_SESS, \' \', GROUPE.Annee_Academic) as SessionAnnee')
+            ->selectRaw('UE.CodeUE, UE.LibelleUE, ECUE.coef, delib.Moyenne, delib.Des_Deliber,CONCAT(sess.CODE_SESS, \' \', GROUPE.Annee_Academic) as SessionAnnee')
             ->join('etudiants as etud', 'delib.Matri_Elev', '=', 'etud.Matri_Elev')
             ->join('UE', 'delib.CodeUE', '=', 'UE.CodeUE')
             ->join('GROUPE', 'delib.IdGroupe', '=', 'GROUPE.IdGroupe')
@@ -157,8 +177,11 @@ class RelevesController extends Controller {
         // Initialisez deux tableaux pour les UE majeures et mineures
         $ueMajeur = [];
         $ueMineur = [];
+        $coefuevalideMajeur=0;
+        $coefuevalideMineur=0;
+        $TOTALCECTCAPI=0;
 
-        foreach ($results as $result) {
+        foreach ($mergedResults as $result) {
             if ($result->coef >= 4) {
                 // Ajoutez l'UE à la liste des UE majeures
                 $ueMajeur[] = $result;
@@ -167,12 +190,40 @@ class RelevesController extends Controller {
                 $ueMineur[] = $result;
             }
         }
+        //calcule des coeficient capialisé ue majeur
+        foreach ($ueMajeur as $resultreq) {
+            if($resultreq->Des_Deliber==="Validé" || $resultreq->Des_Deliber==="Compensé(e)")
+            {
+                $resultreq->CoefValide=$resultreq->coef;
+                $coefuevalideMajeur+=$resultreq->CoefValide;
+
+            }
+            else{
+                $resultreq->CoefValide=0;
+        
+            }
+        }
+        //calcule des coeficient capialisé ue mineur
+        foreach ($ueMineur as $resultreq) {
+            if($resultreq->Des_Deliber==="Validé" || $resultreq->Des_Deliber==="Compensé(e)")
+            {
+                $resultreq->CoefValide=$resultreq->coef;
+                $coefuevalideMineur+=$resultreq->CoefValide;
+
+            }
+            else{
+                $resultreq->CoefValide=0;
+        
+            }
+        }
+        //somme total des coeficient capialisé
+        $TOTALCECTCAPI=$coefuevalideMajeur+$coefuevalideMineur."/30";
 
             // Calcul de la somme totale des coefficients pour les UE majeures et mineures
             $totalCoefMajeur = array_sum(array_column($ueMajeur, 'coef'));
             $totalCoefMineur = array_sum(array_column($ueMineur, 'coef'));
 
-            // Calcul de la moyenne pondérée pour les UE majeures et mineures
+/*             // Calcul de la moyenne pondérée pour les UE majeures et mineures
             $moyennePondereeMajeur = array_sum(array_map(function ($ue) {
                 return $ue->Moyenne * $ue->coef;
             }, $ueMajeur)) / $totalCoefMajeur;
@@ -180,8 +231,22 @@ class RelevesController extends Controller {
             $moyennePondereeMineur = array_sum(array_map(function ($ue) {
                 return $ue->Moyenne * $ue->coef;
             }, $ueMineur)) / $totalCoefMineur;
+ */
+            if ($totalCoefMajeur != 0) {
+                $moyennePondereeMajeur = round(array_sum(array_map(function ($ue) {
+                    return $ue->Moyenne * $ue->coef;
+                }, $ueMajeur)) / $totalCoefMajeur,2);
+            } else {
+                $moyennePondereeMajeur = 0; // Ou une autre valeur par défaut
+            }
 
-
+            if ($totalCoefMineur != 0) {
+                $moyennePondereeMineur = round(array_sum(array_map(function ($ue) {
+                    return $ue->Moyenne * $ue->coef;
+                }, $ueMineur)) / $totalCoefMineur,2);
+            } else {
+                $moyennePondereeMineur = 0; // Ou une autre valeur par défaut
+            }
 
             // Maintenant, exécutez la requête pour les informations de l'élève
             $class_elev = DB::table('Elèves as Elev')
@@ -213,13 +278,18 @@ class RelevesController extends Controller {
                 'UE_Majeures' => [
                     'SommeTotaleCoef' => $totalCoefMajeur,
                     'MoyennePonderee' => $moyennePondereeMajeur,
+                    'CECTCAPI'=>$coefuevalideMajeur,
                     'UEs' => $ueMajeur,
                 ],
                 'UE_Mineures' => [
                     'SommeTotaleCoef' => $totalCoefMineur,
                     'MoyennePonderee' => $moyennePondereeMineur,
+                    'CECTCAPI'=>$coefuevalideMineur,
                     'UEs' => $ueMineur,
                 ],
+                "TOTALCECT"=>$TOTALCECTCAPI,
+                "Annee_Academique"=>trim(str_replace('-', '/', $annee_acad)),
+
             ];
             $jsonResult['Etudiant'] = $class_elev;
 
